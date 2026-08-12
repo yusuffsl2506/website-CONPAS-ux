@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONPAS System - Corona Plasma Sterilizer</title>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Chart.js & jsPDF -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <div class="brand-title">
+                        <span class="text-glow">C</span>
+                        <span class="o-wrapper">O<span class="bolt">⚡</span></span>
+                        
+                        <span class="text-glow">NPAS</span>
+                    </div>
+                    <div class="brand-subtitle">Corona Plasma Sterilizer</div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#home" class="nav-link active">🏠 Home</a>
+                <a href="#dashboard" class="nav-link">📊 Dashboard</a>
+                <a href="#historis" class="nav-link">📁 Historical Data</a>
+            </nav>
+
+            <!-- WIDGET TAMBAHAN: Jam & Quick Action -->
+            <div class="sidebar-widgets">
+                <!-- Live Clock -->
+                <div class="widget-clock">
+                    <div id="clock-time" class="clock-time">00:00:00</div>
+                    <div id="clock-date" class="clock-date">-</div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="widget-actions">
+                    <div class="action-item">
+                        <span class="action-label">🔔 Mute Alarm</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-mute">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                &copy; 2026 CONPAS Project<br>Electrical Engineering Final Project
+            </div>
+        </aside>
+
+        <!-- KONTEN UTAMA -->
+        <main class="main-content">
+            
+            <!-- HOME PAGE -->
+            <section class="page active" id="home">
+                <div class="hero-container">
+                    <div class="hero-visual-box">
+                        <!-- Overlay Efek HUD & Plasma Grid -->
+                        <div class="hud-grid-overlay"></div>
+                        <div class="plasma-flare"></div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- DASHBOARD PAGE -->
+            <section class="page" id="dashboard">
+                <div class="card-hero">
+                    <div class="mqtt-header">
+                        <div class="mqtt-title-group">
+                            <h2>Broker Connection Status</h2>
+                            <p id="mqtt-broker-info">Web Connection to MQTT Broker | Topic: conpas/device/telemetry</p>
+                        </div>
+                        <div id="mqtt-badge" class="mqtt-badge disconnected">
+                            <span class="mqtt-dot"></span>
+                            <span id="mqtt-status-text">DISCONNECTED</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-actions">
+                        <div class="select-wrapper">
+                            <label for="mode-select">Select Operation Mode</label>
+                            <select id="mode-select">
+                                <option value="soft">SOFT MODE</option>
+                                <option value="normal" selected>NORMAL MODE</option>
+                                <option value="intensive">INTENSIVE MODE</option>
+                            </select>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" id="btn-start">⚡ START</button>
+                            <button class="btn btn-danger" id="btn-stop">🔴 STOP</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-progress">
+                    <div class="progress-header">
+                        <span id="status-tahapan">Standby</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="timer-wrapper">
+                        Remaining Process Time: <strong id="timer-text">00:00</strong>
+                    </div>
+                </div>
+
+                <div class="sensor-grid">
+                    <div class="card-sensor">
+                        <h3>Ozone Level</h3>
+                        <div class="sensor-value"><span id="val-ozon">0.0</span> <small>ppm</small></div>
+                    </div>
+                    <div class="card-sensor">
+                        <h3>Current</h3>
+                        <div class="sensor-value"><span id="val-arus">0</span> <small>mA</small></div>
+                    </div>
+                    <div class="card-sensor">
+                        <h3>Load Weight</h3>
+                        <div class="sensor-value"><span id="val-beban">0</span> <small>g</small></div>
+                    </div>
+                    <div class="card-sensor">
+                        <h3>Input Voltage</h3>
+                        <div class="sensor-value"><span id="val-voltage">0</span> <small>V</small></div>
+                    </div>
+                    <div class="card-sensor">
+                        <h3>Fan Status</h3>
+                        <div class="sensor-value status-fan">
+                            <span class="icon-fan" id="fan-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 0 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 0-7.002 8.618l1.45-5.412Z"/>
+                                    <path d="M12 12v.01"/>
+                                </svg>
+                            </span> <span id="fan-status" style="font-size: 16px;">STOP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-chart">
+                    <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <h3 style="color: #f8fafc; font-size: 16px; font-weight: 600; margin: 0;">Real-time Sensor Chart</h3>
+                        <button class="btn-action btn-dl" id="btn-download-chart">⬇️ Download Chart (PNG)</button>
+                    </div>
+                    <div style="position: relative; height: 320px; width: 100%;">
+                        <canvas id="sensorChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DATA HISTORIS PAGE -->
+            <section class="page" id="historis">
+                <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 15px; margin-bottom: 24px;">
+                    <div>
+                        <h2>Historical Data</h2>
+                        <p>Sterilization process history log per cycle.</p>
+                    </div>
+                    
+                    <div class="global-actions" style="display: flex; gap: 10px; align-items: center;">
+                        <select id="filter-cycle" class="btn-action" style="padding: 8px 12px; background: rgba(5,8,16,0.9); outline: none;">
+                            <option value="ALL">All Cycles (View All)</option>
+                        </select>
+                        
+                        <button class="btn-action btn-dl" id="btn-export-pdf" title="Print / Save PDF">📄 PDF</button>
+                        <button class="btn-action btn-dl" id="btn-export-excel" title="Export Excel (CSV)">📊 Excel</button>
+                        <button class="btn-action btn-del" id="btn-delete-all" title="Delete All Data">🗑️ Delete All</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="history-table" id="table-historis">
+                        <thead>
+                            <tr>
+                                <th>Record Time</th>
+                                <th>Active Mode</th>
+                                <th>Remaining Time</th>
+                                <th>Current (mA)</th>
+                                <th>Load (g)</th>
+                                <th>Ozone (ppm)</th>
+                                <th>Stage</th>
+                                <th style="text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            <!-- Data otomatis terisi -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="#home" class="mobile-nav-link active"><span class="mobile-icon">🏠</span>Home</a>
+            <a href="#dashboard" class="mobile-nav-link"><span class="mobile-icon">📊</span>Dashboard</a>
+            <a href="#historis" class="mobile-nav-link"><span class="mobile-icon">📁</span>History</a>
+        </nav>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
