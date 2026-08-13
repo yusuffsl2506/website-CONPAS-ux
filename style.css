@@ -757,7 +757,7 @@ body {
         padding: 0;
         background-color: transparent;
         background-position: center center;
-        background-size: calc(100vw - 20px) auto;
+        background-size: 100% auto !important;
         box-shadow: none;
     }
     .ilham-badge { bottom: 16px; right: 16px; padding: 8px 14px; }
