@@ -447,7 +447,7 @@ body {
     width: 100%;
     min-height: 620px;
     background: #03060c url('hero-conpas.png') no-repeat center center;
-    background-size: 100% 100%; 
+    background-size: contain;
     border-radius: 20px;
     position: relative;
     border: 1px solid rgba(56, 189, 248, 0.25);
@@ -724,7 +724,14 @@ body {
    ========================================================= */
 .bottom-nav { display: none; }
 @media (max-width: 992px) {
-    .hero-visual-box { min-height: auto; display: flex; flex-direction: column; gap: 20px; padding: 20px; }
+    .hero-visual-box {
+        min-height: 520px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+        background-size: min(92vw, 760px) auto;
+    }
 }
 @media (max-width: 768px) {
     .sidebar { display: none !important; }
@@ -736,7 +743,22 @@ body {
     .mobile-nav-link.active .mobile-icon { filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6)); }
     .control-actions { flex-direction: column; align-items: stretch; }
     .btn-group { flex-direction: column; }
-    .page#home.active { min-height: calc(100vh - 120px); }
+    .page#home.active {
+        min-height: calc(100vh - 110px);
+        align-items: center;
+    }
+    .hero-container {
+        max-width: 100%;
+    }
+    .hero-visual-box {
+        min-height: clamp(420px, 68vh, 620px);
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        background-color: transparent;
+        background-size: min(92vw, 520px) auto;
+        box-shadow: none;
+    }
     .ilham-badge { bottom: 16px; right: 16px; padding: 8px 14px; }
     .ilham-text { font-size: 9px; letter-spacing: 1px; }
 }
